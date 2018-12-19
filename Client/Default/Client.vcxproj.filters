@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.for Windows">
+      <UniqueIdentifier>{085468ba-c765-47c5-ae35-447becd9457c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999.tmp">
+      <UniqueIdentifier>{8dd37543-1aef-4956-a22a-a69c81dafb67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="999.tmp\리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="999.tmp\소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="999.tmp\헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="00.for Windows\WinMain">
+      <UniqueIdentifier>{c9768af8-ae2b-4d46-97f2-c1077fa23f5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Headers">
+      <UniqueIdentifier>{bec7aee0-3533-407d-ab1f-e70cfb7c749c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Headers\00.separated_header">
+      <UniqueIdentifier>{cc18413d-a221-494e-8e42-d7ef8c3e9e80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.ToEngine">
+      <UniqueIdentifier>{1767d6f1-e534-49be-9a01-9fcdcaef428c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.for Windows\WinApi_toEngine">
+      <UniqueIdentifier>{ddf24020-11d4-4adb-8564-2881b3cf8f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.for Windows\WinApi_Derived">
+      <UniqueIdentifier>{4ca188d7-17f4-434f-886b-90a554aa1d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.toClient">
+      <UniqueIdentifier>{9ca4d53c-535b-4eb3-840c-ff47ad87b28b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.ToEngine\00.Utility">
+      <UniqueIdentifier>{0144700f-9830-4704-96ef-2b2d112431a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.ToEngine\01.Components">
+      <UniqueIdentifier>{5e9d60ed-93fd-451a-88f6-743d24f47aaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.ToEngine\01.Components\00.BasicMesh">
+      <UniqueIdentifier>{2ef83b87-7ba0-4083-b7ee-625b1b801a45}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\WinAPI\API_Setup.cpp">
+      <Filter>00.for Windows\WinApi_toEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\WinMain\WinMain.cpp">
+      <Filter>00.for Windows\WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\API_Derived.cpp">
+      <Filter>00.for Windows\WinApi_Derived</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Scene.cpp">
+      <Filter>01.ToEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\DxDevice.cpp">
+      <Filter>01.ToEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\GameObject.cpp">
+      <Filter>01.ToEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Layer.cpp">
+      <Filter>01.ToEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\dxException.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Timer.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\ShaderCompiler.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\GeneralSettings.cpp">
+      <Filter>02.toClient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\testScene.cpp">
+      <Filter>02.toClient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\ComponentHolder.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\MeshGeometry.cpp">
+      <Filter>01.ToEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\MathHelper.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\BufferUtility.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\box.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Camera.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Component.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Renderer.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Transform.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\TestObject_Camera.cpp">
+      <Filter>02.toClient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\TestObject.cpp">
+      <Filter>02.toClient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\TestObject2.cpp">
+      <Filter>02.toClient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\BasicMesh.cpp">
+      <Filter>01.ToEngine\01.Components\00.BasicMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\BasicMesh_Crate.cpp">
+      <Filter>01.ToEngine\01.Components\00.BasicMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code_Engine\Material.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Microsoft\DDSTextureLoader.cpp">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\WinAPI\API_Setup.h">
+      <Filter>00.for Windows\WinApi_toEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\stdHeaders.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\STL.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\stream.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\unknown.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\windowsHeaders.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\d3dHeaders.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\namespaces.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Utilitys.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GlobalVariables.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\API_Derived.h">
+      <Filter>00.for Windows\WinApi_Derived</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Functor.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Scene.h">
+      <Filter>01.ToEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\DxDevice.h">
+      <Filter>01.ToEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\GameObject.h">
+      <Filter>01.ToEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Layer.h">
+      <Filter>01.ToEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\dxException.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Timer.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\ShaderCompiler.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\GeneralSettings.h">
+      <Filter>02.toClient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\testScene.h">
+      <Filter>02.toClient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\ComponentHolder.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Templates.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\MeshGeometry.h">
+      <Filter>01.ToEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\MathHelper.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\BufferUtility.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\box.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Camera.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Component.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Renderer.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Transform.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Structs.h">
+      <Filter>99.Headers\00.separated_header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\TestObject.h">
+      <Filter>02.toClient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\TestObject_Camera.h">
+      <Filter>02.toClient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\TestObject2.h">
+      <Filter>02.toClient</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\BasicMesh.h">
+      <Filter>01.ToEngine\01.Components\00.BasicMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\BasicMesh_Crate.h">
+      <Filter>01.ToEngine\01.Components\00.BasicMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Material.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Microsoft\DDSTextureLoader.h">
+      <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

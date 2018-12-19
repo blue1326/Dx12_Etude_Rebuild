@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.Client", "00.Client", "{4089E111-7E14-447A-A367-C2AFC68D7D97}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\default\Client.vcxproj", "{CDDD694D-1376-488D-A9A6-890EBC9110ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "98.Generic", "98.Generic", "{ECC8C78D-B8C3-407D-B0BF-4BDA0FC569A1}"
+	ProjectSection(SolutionItems) = preProject
+		Generic\Macro.h = Generic\Macro.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "99.Microsoft", "99.Microsoft", "{EE8562A4-FA25-4C34-9CCB-9A19BFBAF74A}"
+	ProjectSection(SolutionItems) = preProject
+		Microsoft\d3dx12.h = Microsoft\d3dx12.h
+		Microsoft\DDSTextureLoader.cpp = Microsoft\DDSTextureLoader.cpp
+		Microsoft\DDSTextureLoader.h = Microsoft\DDSTextureLoader.h
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDDD694D-1376-488D-A9A6-890EBC9110ED}.Debug|x64.ActiveCfg = Debug|x64
+		{CDDD694D-1376-488D-A9A6-890EBC9110ED}.Debug|x64.Build.0 = Debug|x64
+		{CDDD694D-1376-488D-A9A6-890EBC9110ED}.Release|x64.ActiveCfg = Release|x64
+		{CDDD694D-1376-488D-A9A6-890EBC9110ED}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDDD694D-1376-488D-A9A6-890EBC9110ED} = {4089E111-7E14-447A-A367-C2AFC68D7D97}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2B18DC20-BFEA-475D-8F19-36D25F8216F4}
+	EndGlobalSection
+EndGlobal
