@@ -52,8 +52,9 @@ int CApiSetUP_Derived::Run()
 	//need timer
 	assert(m_GS->GetTimer(CGeneralSettings::AllTimer) != nullptr);
 	m_GS->TimerReset(CGeneralSettings::AllTimer);
-	m_GS->SetFramelateLimit(60.f);
+	m_GS->SetFramelateLimit(120.f);
 	//message Loops
+	
 	while (msg.message != WM_QUIT)
 	{
 		//peeking Windows Message
@@ -65,7 +66,7 @@ int CApiSetUP_Derived::Run()
 		//OtherWise aonther actions
 		else
 		{
-			m_GS->TimerTick(CGeneralSettings::AllTimer);
+			m_GS->TimerTick(CGeneralSettings::MainTimer);
 			//timers tick
 
 			if (!m_AppPaused)
@@ -225,6 +226,15 @@ LRESULT CApiSetUP_Derived::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 			//Set4xMsaaState(!m4xMsaaState);
 
 			return 0;
+	case WM_MOUSEHOVER:
+		return 0;
+	case WM_MOUSEMOVE:
+		m_GS->OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		return 0;
+	case WM_LBUTTONDOWN:
+		return 0;
+	case WM_RBUTTONDOWN:
+		return 0;
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);

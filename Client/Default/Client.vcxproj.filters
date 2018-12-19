@@ -135,6 +135,9 @@
     <ClCompile Include="..\..\Microsoft\DDSTextureLoader.cpp">
       <Filter>01.ToEngine\00.Utility</Filter>
     </ClCompile>
+    <ClCompile Include="..\Code_Engine\Controller.cpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\WinAPI\API_Setup.h">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Microsoft\DDSTextureLoader.h">
       <Filter>01.ToEngine\00.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Controller.h">
+      <Filter>01.ToEngine\01.Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
