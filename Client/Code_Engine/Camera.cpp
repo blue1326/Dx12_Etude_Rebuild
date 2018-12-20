@@ -54,7 +54,7 @@ HRESULT CCamera::Init_Component()
 void CCamera::Update_Component(const std::shared_ptr<CTimer> t)
 {
 	                                   //pos   target  up
-	XMMATRIX m_View = XMMatrixLookAtLH(m_vEye, m_vAt, m_vUp);
+	m_View = XMMatrixLookAtLH(m_vEye, m_vAt, m_vUp);
 	//g_matView = m_View;
 	
 	m_DxDevice->SetViewMatrix(m_View);

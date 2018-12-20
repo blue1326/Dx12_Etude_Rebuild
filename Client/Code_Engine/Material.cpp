@@ -87,4 +87,21 @@ void CMaterial::LoadTexture()
 		m_Texture->Resource, m_Texture->UploadHeap));
 }
 
+void CMaterial::SetUpDescripterHeap(ComPtr<ID3D12DescriptorHeap> _heap)
+{
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(_heap->GetCPUDescriptorHandleForHeapStart());
+
+	auto tex = m_Texture->Resource;
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = tex->GetDesc().Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = tex->GetDesc().MipLevels;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+
+	m_DxDevice->GetDevice()->CreateShaderResourceView(tex.Get(), &srvDesc, hDescriptor);
+}
+
 

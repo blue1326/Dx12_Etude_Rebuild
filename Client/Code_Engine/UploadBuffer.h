@@ -14,6 +14,7 @@ public:
 		,m_UploadBuffer(nullptr)
 		,m_MappedData(NULL)
 		,m_ElementByteSize(0)
+		, m_DescriptorSize(0)
 	{}
 	/*CDiscriptor(const CDiscriptor& rhs) = delete;
 	CDiscriptor& operator=(const CDiscriptor&rhs) = delete;*/
@@ -26,20 +27,53 @@ private:
 	T data;
 	UINT m_ElementByteSize;
 	const shared_ptr<DxDevice> m_DxDevice;
+
+	UINT m_DescriptorSize;
+
 public:
 	void SetData(const T& _data)
 	{
 		data = _data;
-		memcpy(&m_MappedData[m_ElementByteSize], &data, sizeof(T));
+		memcpy(&m_MappedData[m_ElementByteSize], &data, sizeof(data));
 	}
-	
+	ComPtr<ID3D12DescriptorHeap> GetHeap()
+	{
+		return m_Heap;
+	}
 
+	ComPtr<ID3D12Resource> GetConstantBuffer()
+	{
+		return m_UploadBuffer;
+	}
+	const UINT& GetDesciptorSize()
+	{
+		return m_DescriptorSize;
+	}
 
 public:
 	virtual HRESULT Init_Component() 
 	{ 
+		ComPtr<ID3D12GraphicsCommandList> cmdlist = m_DxDevice->GetCommandList();
+		ComPtr<ID3D12CommandAllocator> cmdalloc = m_DxDevice->GetCommandAllocator();
+		ComPtr<ID3D12CommandQueue> cmdqueue = m_DxDevice->GetCommandQueue();
+		// Reset the command list to prep for initialization commands.
+		ThrowIfFailed(cmdlist->Reset(cmdalloc.Get(), nullptr));
+
+		// Get the increment size of a descriptor in this heap type.  This is hardware specific, 
+		// so we have to query this information.
+		m_DescriptorSize = m_DxDevice->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+
 		BuildDescriptorHeap();
 		CreateUploadBuffer();
+
+		// Execute the initialization commands.
+		ThrowIfFailed(cmdlist->Close());
+		ID3D12CommandList* cmdsLists[] = { cmdlist.Get() };
+		cmdqueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		// Wait until initialization is complete.
+		m_DxDevice->FlushCommandQueue();
 		return S_OK; 
 	}
 	virtual void Update_Component(const std::shared_ptr<CTimer> t){}
@@ -76,7 +110,7 @@ void CDiscriptor<T>::BuildConstantBuffer()
 template<typename T>
 void CDiscriptor<T>::BuildDescriptorHeap()
 {
-	D3D12_DESCRIPTOR_HEAP_DESC HeapDesc;
+	D3D12_DESCRIPTOR_HEAP_DESC HeapDesc = {};
 	HeapDesc.NumDescriptors = 1;
 	HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;

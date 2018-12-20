@@ -42,6 +42,9 @@ private:
 private:
 	shared_ptr<Material> m_Material;
 	shared_ptr<Texture> m_Texture;
+public:
+	void SetUpDescripterHeap(ComPtr<ID3D12DescriptorHeap> _heap);
+
 };
 
 #endif // Material_h__

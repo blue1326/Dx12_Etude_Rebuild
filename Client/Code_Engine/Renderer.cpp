@@ -38,8 +38,9 @@ void CRenderer::Update_Component(const std::shared_ptr<CTimer> t)
 
 void CRenderer::Render_GameObject(void)
 {
-	RenderDebug();
 	RenderNoneAlpha();
+	RenderDebug();
+	
 	Clear_RenderList();
 }
 
