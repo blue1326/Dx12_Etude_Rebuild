@@ -5,6 +5,7 @@
 #include "Component.h"
 
 #include "Scene.h"
+//class CController;
 class CGeneralSettings 
 {
 public:
@@ -27,6 +28,13 @@ public: //for Timer method
 	void TimerStop(TimerDef td);
 	void TimerTick(TimerDef td);
 
+public:
+	void OnMouseMove(WPARAM btnState, int x, int y);
+
+	shared_ptr<CComponent> m_Controller;
+private:
+	int mouse_x;
+	int mouse_y;
 public: //for framelate
 
 public: //for frame Count
@@ -34,6 +42,9 @@ public: //for frame Count
 private: //for frame Limit
 	float m_CallPerSec;
 	float m_fTimeAcc;
+
+
+	//bool isLimit = false;
 public: //for frame Limit
 	void SetFramelateLimit(const float& _Limit);
 	

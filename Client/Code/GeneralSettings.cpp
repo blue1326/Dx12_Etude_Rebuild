@@ -14,6 +14,9 @@
 #include "box.h"
 #include "BasicMesh_Crate.h"
 #include "Material.h"
+#include "Controller.h"
+
+
 CGeneralSettings::CGeneralSettings(const std::shared_ptr<DxDevice> Device, const std::shared_ptr<CTimer> Timer1, const std::shared_ptr<CTimer> Timer2)
 	: m_DxDevice(Device), m_Timer1(move(Timer1)), m_Timer2(move(Timer2)),m_fTimeAcc(0.f),m_CallPerSec(0.f)
 {
@@ -62,6 +65,12 @@ HRESULT CGeneralSettings::InitComponents()
 		return E_FAIL;
 	CComponentHolder::GetInstance()->AddOriginComponent("Renderer", inst);
 
+	inst.reset(new CController);
+	m_Controller = inst;
+	CComponentHolder::GetInstance()->AddOriginComponent("Controller", inst);
+
+
+
 	inst.reset(new CTransform(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("Transform", inst);
 
@@ -97,15 +106,33 @@ HRESULT CGeneralSettings::InitComponents()
 ///////////////////////////////////////////////////////////for Generic Method
 void CGeneralSettings::Update()
 {
+	m_Timer2->Tick();
+	m_Scene->Update_Scene(m_Timer2);
+
+	//RECT rc;
+	//POINT p1, p2;
+	//GetClientRect(g_hWnd, &rc);
+
+	//p1.x = rc.left;
+	//p1.y = rc.top;
+	//p2.x = rc.right;
+	//p2.y = rc.bottom;
+
+	//ClientToScreen(g_hWnd, &p1);
+	//ClientToScreen(g_hWnd, &p2);
+	//rc.left = p1.x;
+	//rc.top = p1.y;
+	//rc.right = p2.x;
+	//rc.bottom = p2.y;
+	//ClipCursor(&rc);
 	
-	m_Scene->Update_Scene(m_Timer1);
 	
 }
 
 void CGeneralSettings::Last_Update()
 {
 
-	m_Scene->LastUpdate_Scene(m_Timer1);
+	m_Scene->LastUpdate_Scene(m_Timer2);
 	//system("cls");
 	
 }
@@ -113,7 +140,7 @@ void CGeneralSettings::Last_Update()
 void CGeneralSettings::Render()
 {
 	
-		
+	
 		m_DxDevice->Render_Begin();
 
 		dynamic_cast<CRenderer*>(CComponentHolder::GetInstance()->Get_Component("Renderer").get())->Render_GameObject();
@@ -133,6 +160,8 @@ void CGeneralSettings::OnResize()
 	if(g_DeviceInitState)
 		m_DxDevice->OnResize();
 	m_Scene->OnResize();
+
+	
 }
 //////////////////////////////////////////////////////////for TimerMethod
 std::shared_ptr<CTimer> CGeneralSettings::GetTimer(TimerDef td)
@@ -221,6 +250,17 @@ void CGeneralSettings::TimerTick(TimerDef td)
 	
 }
 
+
+void CGeneralSettings::OnMouseMove(WPARAM btnState, int x, int y)
+{
+	CController* pController = dynamic_cast<CController*>(m_Controller.get());
+	mouse_x = x;
+	mouse_y = y;
+	pController->Update_MouseXY(x, y);
+	pController->Update_MouseBtnState(btnState);
+
+}
+
 void CGeneralSettings::SetFramelateLimit(const float& _Limit)
 {
 	m_CallPerSec = 1.f / _Limit;
@@ -268,9 +308,9 @@ bool CGeneralSettings::CalculateFrameStats(const HWND& mainWnd, std::wstring cap
 	// Compute averages over one second period.
 	if ((m_Timer1->TotalTime() - timeElapsed) >= 1.0f)
 	{
-		float fps = (float)frameCnt; // fps = frameCnt / 1
+		int fps = frameCnt; // fps = frameCnt / 1
 		
-		float limitedfps = (float)frameCntLimit;
+		int limitedfps = frameCntLimit;
 		
 		float mspf = 1000.0f / fps;
 
@@ -278,10 +318,17 @@ bool CGeneralSettings::CalculateFrameStats(const HWND& mainWnd, std::wstring cap
 		std::wstring fpsStr = std::to_wstring(fps);
 		std::wstring mspfStr = std::to_wstring(mspf);
 		
+		///testcode
+		wstring mousex = to_wstring(mouse_x);
+		wstring mousey = to_wstring(mouse_y);
+
+
 		std::wstring windowText = caption +
 			L" Limited Fps: " + limitfpsStr +
-			L"         Fps: " + fpsStr +
-			L"        mspf: " + mspfStr;
+			L"  Fps: " + fpsStr +
+			L"  mspf: " + mspfStr +
+			L"  mx: " + mousex +
+			L"  my: " + mousey;
 
 		SetWindowText(mainWnd, windowText.c_str());
 

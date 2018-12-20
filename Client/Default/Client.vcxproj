@@ -161,6 +161,7 @@
     <ClCompile Include="..\Code_Engine\Camera.cpp" />
     <ClCompile Include="..\Code_Engine\Component.cpp" />
     <ClCompile Include="..\Code_Engine\ComponentHolder.cpp" />
+    <ClCompile Include="..\Code_Engine\Controller.cpp" />
     <ClCompile Include="..\Code_Engine\DxDevice.cpp" />
     <ClCompile Include="..\Code_Engine\dxException.cpp" />
     <ClCompile Include="..\Code_Engine\GameObject.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="..\Code_Engine\Camera.h" />
     <ClInclude Include="..\Code_Engine\Component.h" />
     <ClInclude Include="..\Code_Engine\ComponentHolder.h" />
+    <ClInclude Include="..\Code_Engine\Controller.h" />
     <ClInclude Include="..\Code_Engine\DxDevice.h" />
     <ClInclude Include="..\Code_Engine\dxException.h" />
     <ClInclude Include="..\Code_Engine\GameObject.h" />

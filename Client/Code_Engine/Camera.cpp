@@ -96,8 +96,51 @@ void CCamera::SetEyeAtUp(XMVECTOR vEye, XMVECTOR vAt, XMVECTOR vUp)
 	m_vUp = vUp;
 }
 
+
+void CCamera::SetEyeAtUp(const XMVECTOR* vEye /*= nullptr*/, const XMVECTOR* vAt /*= nullptr*/, const XMVECTOR* vUp /*= nullptr*/)
+{
+	if (nullptr != vEye)
+		m_vEye = *vEye;
+	if (nullptr != vAt)
+		m_vAt = *vAt;
+	if (nullptr != vUp)
+		m_vUp = *vUp;
+}
+
 void CCamera::SetWorld(XMMATRIX matWorld)
 {
 	//m_World = matWorld;
+}
+
+DirectX::XMVECTOR CCamera::GetEye()
+{
+	return m_vEye;
+}
+
+DirectX::XMVECTOR CCamera::GetAt()
+{
+	return m_vAt;
+}
+
+DirectX::XMVECTOR CCamera::GetUp()
+{
+	return m_vUp;
+}
+//
+//void CCamera::GetEyeAtUp(XMVECTOR& vEye, XMVECTOR& vAt, XMVECTOR& vUp)
+//{
+//	vEye = m_vEye;
+//	vAt = m_vAt;
+//	vUp = m_vUp;
+//}
+
+void CCamera::GetEyeAtUp( XMVECTOR* vEye /*=nullptr*/,  XMVECTOR* vAt /*= nullptr*/,  XMVECTOR* vUp /*= nullptr*/)
+{
+	if(nullptr != vEye)
+		*vEye = m_vEye;
+	if(nullptr != vAt)
+		*vAt = m_vAt;
+	if (nullptr != vUp)
+		*vUp = m_vUp;
 }
 

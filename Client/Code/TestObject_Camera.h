@@ -17,11 +17,19 @@ public:
 	virtual int LastUpdate_GameObject(const std::shared_ptr<CTimer> t)override;
 	virtual void Render_GameObject()override;
 	virtual void OnResize()override;
+
+
+private:///is testcode soon move and remake
+	void Check_input_Keyboard(const std::shared_ptr<CTimer> t);
+	void Check_input_Mouse(const std::shared_ptr<CTimer> t);
+
+
 protected:
 	
 private:
 	shared_ptr<CComponent> pTransform;
 	shared_ptr<CComponent> pCamera;
+	shared_ptr<CComponent> pController;
 };
  
 

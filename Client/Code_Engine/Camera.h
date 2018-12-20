@@ -39,7 +39,11 @@ public:
 	void SetUp(XMVECTOR vUp);
 	void SetEyeAtUp(XMVECTOR vEye, XMVECTOR vAt, XMVECTOR vUp);
 	void SetWorld(XMMATRIX matWorld);
-
+	XMVECTOR GetEye();
+	XMVECTOR GetAt();
+	XMVECTOR GetUp();
+	void GetEyeAtUp(XMVECTOR* vEye =nullptr, XMVECTOR* vAt = nullptr,  XMVECTOR* vUp = nullptr);
+	void SetEyeAtUp(const XMVECTOR* vEye = nullptr, const XMVECTOR* vAt = nullptr, const XMVECTOR* vUp = nullptr);
 private:
 	const shared_ptr<DxDevice> m_DxDevice;
 };
