@@ -41,6 +41,7 @@ int CTestObject_Camera::Update_GameObject(const std::shared_ptr<CTimer> t)
 
 	//dynamic_cast<CCamera*>(pCamera.get())->SetEye(((CTransform*)pTransform.get())->GetPosition());
 	dynamic_cast<CCamera*>(pCamera.get())->Update_Component(t);
+	dynamic_cast<CTransform*>(pTransform.get())->SetPosition(dynamic_cast<CCamera*>(pCamera.get())->GetEye());
 
 		
 	return 0;

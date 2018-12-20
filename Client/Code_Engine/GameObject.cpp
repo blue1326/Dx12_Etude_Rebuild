@@ -60,7 +60,7 @@ void CGameObject::CreateUplaodBuffer()
 	// UINT   SizeInBytes;   // multiple of 256
 	// } D3D12_CONSTANT_BUFFER_VIEW_DESC;
 	//it is now using just constant buffer
-	m_ElementByteSize = BufferUtility::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	m_ElementByteSize = BufferUtility::CalcConstantBufferByteSize(sizeof(ObjectConstant));
 
 	ThrowIfFailed(m_DxDevice->GetDevice().Get()->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),

@@ -25,6 +25,10 @@ private:
 	shared_ptr<CComponent> pTransform;
 	shared_ptr<CComponent> pRenderer;
 	shared_ptr<CComponent> pCrate;
+	shared_ptr<CComponent> pMaterial;
+	shared_ptr<CComponent> pDiscriptor_OC;
+	shared_ptr<CComponent> pDiscriptor_PASS;
+	shared_ptr<CComponent> pDiscriptor_MAT;
 private:
 	CTestObject2();
 };

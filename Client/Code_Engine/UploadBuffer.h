@@ -5,17 +5,19 @@
 #include "BufferUtility.h"
 #include "dxException.h"
 template<typename T>
-class CUploadBuffer :public CComponent
+class CDiscriptor :public CComponent
 {
 public:
-	explicit CUploadBuffer(const shared_ptr<DxDevice> _device)
+	explicit CDiscriptor(const shared_ptr<DxDevice> _device)
 		:m_DxDevice(_device)
 		,m_Heap(nullptr)
 		,m_UploadBuffer(nullptr)
 		,m_MappedData(NULL)
 		,m_ElementByteSize(0)
 	{}
-	virtual ~CUploadBuffer() {}
+	/*CDiscriptor(const CDiscriptor& rhs) = delete;
+	CDiscriptor& operator=(const CDiscriptor&rhs) = delete;*/
+	virtual ~CDiscriptor() {}
 
 private:
 	ComPtr<ID3D12DescriptorHeap> m_Heap;
@@ -28,14 +30,20 @@ public:
 	void SetData(const T& _data)
 	{
 		data = _data;
+		memcpy(&m_MappedData[m_ElementByteSize], &data, sizeof(T));
 	}
 	
 
 
 public:
-	virtual HRESULT Init_Component() { return S_OK; }
+	virtual HRESULT Init_Component() 
+	{ 
+		BuildDescriptorHeap();
+		CreateUploadBuffer();
+		return S_OK; 
+	}
 	virtual void Update_Component(const std::shared_ptr<CTimer> t){}
-	virtual std::shared_ptr<CComponent> Clone() { return nullptr; }
+	virtual std::shared_ptr<CComponent> Clone() { return shared_ptr<CComponent>(new CDiscriptor<T>(m_DxDevice)); }
 	virtual void OnResize() {}
 private:
 	void BuildDescriptorHeap();
@@ -44,7 +52,7 @@ private:
 };
 
 template<typename T>
-void CUploadBuffer<T>::CreateUploadBuffer()
+void CDiscriptor<T>::CreateUploadBuffer()
 {
 	m_ElementByteSize = BufferUtility::CalcConstantBufferByteSize(sizeof(T));
 
@@ -60,15 +68,21 @@ void CUploadBuffer<T>::CreateUploadBuffer()
 }
 
 template<typename T>
-void CUploadBuffer<T>::BuildConstantBuffer()
+void CDiscriptor<T>::BuildConstantBuffer()
 {
 
 }
 
 template<typename T>
-void CUploadBuffer<T>::BuildDescriptorHeap()
+void CDiscriptor<T>::BuildDescriptorHeap()
 {
-
+	D3D12_DESCRIPTOR_HEAP_DESC HeapDesc;
+	HeapDesc.NumDescriptors = 1;
+	HeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	HeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	HeapDesc.NodeMask = 0;
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateDescriptorHeap(&HeapDesc,
+		IID_PPV_ARGS(&m_Heap)));
 }
 
 

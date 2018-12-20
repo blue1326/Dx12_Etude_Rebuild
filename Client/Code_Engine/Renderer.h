@@ -49,7 +49,12 @@ private:
 
 	void BuildRootSignature_Debug();
 	void BuildShadersAndInputLayout_Debug();
+	void BuildRootSignature_Default();
+	void BuildShadersAndInputLayout_Default();
 	void BuildPSO_Debug();
+	void BuildPSO_Default();
+
+	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
 private://rootsignatures
 	//ComPtr<ID3D12RootSignature> m_RootSignature;
 

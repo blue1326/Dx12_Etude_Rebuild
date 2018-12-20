@@ -2,6 +2,8 @@
 #include "ComponentHolder.h"
 #include "Renderer.h"
 #include "MathHelper.h"
+#include "Structs.h"
+#include "Timer.h"
 CCamera::CCamera(const shared_ptr<DxDevice> _device)
 	:m_DxDevice(_device)
 	, m_fFovy(0.f)
@@ -56,6 +58,9 @@ void CCamera::Update_Component(const std::shared_ptr<CTimer> t)
 	//g_matView = m_View;
 	
 	m_DxDevice->SetViewMatrix(m_View);
+
+	SetPassConstant(t);
+
 }
 
 std::shared_ptr<CComponent> CCamera::Clone()
@@ -107,6 +112,42 @@ void CCamera::SetEyeAtUp(const XMVECTOR* vEye /*= nullptr*/, const XMVECTOR* vAt
 		m_vAt = *vAt;
 	if (nullptr != vUp)
 		m_vUp = *vUp;
+}
+
+void CCamera::SetPassConstant(const std::shared_ptr<CTimer> t)
+{
+	PassConstants _constant;
+	XMMATRIX view = m_View;
+	XMMATRIX proj = m_Proj;
+
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewProj), viewProj);
+
+	XMStoreFloat4x4(&_constant.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&_constant.InvView, XMMatrixTranspose(invView));
+	XMStoreFloat4x4(&_constant.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&_constant.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&_constant.ViewProj, XMMatrixTranspose(viewProj));
+	XMStoreFloat4x4(&_constant.InvViewProj, XMMatrixTranspose(invViewProj));
+	XMStoreFloat3(&_constant.EyePosW, m_vEye);//위험군
+	//_constant.EyePosW = XMStoreFloat3(m_vEye); //위험군
+	_constant.RenderTargetSize = XMFLOAT2((float)g_ClientWidth, (float)g_ClientHeight);
+	_constant.InvRenderTargetSize = XMFLOAT2(1.0f / g_ClientWidth, 1.0f / g_ClientHeight);
+	_constant.NearZ = 1.0f;
+	_constant.FarZ = 1000.0f;
+	_constant.TotalTime = t->TotalTime();
+	_constant.DeltaTime = t->DeltaTime();
+	_constant.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
+	_constant.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
+	_constant.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+	_constant.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
+	_constant.Lights[1].Strength = { 0.3f, 0.3f, 0.3f };
+	_constant.Lights[2].Direction = { 0.0f, -0.707f, -0.707f };
+	_constant.Lights[2].Strength = { 0.15f, 0.15f, 0.15f };
+
+	m_DxDevice->SetPassConstant(_constant);
 }
 
 void CCamera::SetWorld(XMMATRIX matWorld)

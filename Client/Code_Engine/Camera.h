@@ -45,6 +45,8 @@ public:
 	void GetEyeAtUp(XMVECTOR* vEye =nullptr, XMVECTOR* vAt = nullptr,  XMVECTOR* vUp = nullptr);
 	void SetEyeAtUp(const XMVECTOR* vEye = nullptr, const XMVECTOR* vAt = nullptr, const XMVECTOR* vUp = nullptr);
 private:
+	void SetPassConstant(const std::shared_ptr<CTimer> t);
+private:
 	const shared_ptr<DxDevice> m_DxDevice;
 };
 

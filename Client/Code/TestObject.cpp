@@ -46,7 +46,7 @@ int CTestObject::Update_GameObject(const std::shared_ptr<CTimer> t)
 	WVP = world * m_DxDevice->GetViewMatrix() * m_DxDevice->GetProjMatrix();
 		
 
-	ObjectConstants objConstants;
+	ObjectConstant objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(WVP));
 
 
@@ -72,10 +72,6 @@ void CTestObject::Render_GameObject()
 	ComPtr<ID3D12GraphicsCommandList> cmdList = m_DxDevice->GetCommandList();
 
 	
-	//cmdList->SetPipelineState(dynamic_cast<CRenderer*>(pRenderer.get())->GetPSO("opaquePSO").Get());
-
-	//ID3D12DescriptorHeap* descriptorHeaps[] = { m_CbvHeap.Get() };
-	//ID3D12DescriptorHeap* descriptorHeaps[] = { dynamic_cast<CBox*>(pBox.get())->GetCBVHeap().Get() };
 	ID3D12DescriptorHeap* descriptorHeaps[] = {m_CbvHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 	cmdList->SetGraphicsRootSignature(dynamic_cast<CRenderer*>(pRenderer.get())->GetRootSignature("Debug").Get());

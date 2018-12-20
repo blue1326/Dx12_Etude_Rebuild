@@ -75,9 +75,14 @@ HRESULT CGeneralSettings::InitComponents()
 	inst.reset(new CCamera(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("Camera", inst);
 
-	inst.reset(new CUploadBuffer<ObjectConstants>(m_DxDevice));
+	inst.reset(new CDiscriptor<ObjectConstants>(m_DxDevice));
+	CComponentHolder::GetInstance()->AddOriginComponent("ObjConstant", inst);
 
+	inst.reset(new CDiscriptor<MaterialConstants>(m_DxDevice));
+	CComponentHolder::GetInstance()->AddOriginComponent("MatConstant", inst);
 
+	inst.reset(new CDiscriptor<PassConstants>(m_DxDevice));
+	CComponentHolder::GetInstance()->AddOriginComponent("PassConstant", inst);
 
 	inst.reset(new CBox(m_DxDevice));
 	if (FAILED(inst->Init_Component()))

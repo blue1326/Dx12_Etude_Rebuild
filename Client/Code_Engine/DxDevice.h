@@ -2,6 +2,7 @@
 #define DxDevice_h__
 
 #include "stdHeaders.h"
+#include "Structs.h"
 
 
 class DxDevice
@@ -168,6 +169,18 @@ public://view proj Matrix getter setter
 	{
 		m_matProj = _matProj;
 	}
+private:
+	PassConstants m_passConstant;
+public:
+	void SetPassConstant(const PassConstants& _PC)
+	{
+		m_passConstant = _PC;
+	}
+	const PassConstants& GetPassConstant()
+	{
+		return m_passConstant;
+	}
+
 public:
 	bool Get4xMsaaState()const;//to renderer?
 	UINT Get4xMsaaQuality()const;
