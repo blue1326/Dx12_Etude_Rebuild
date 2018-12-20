@@ -8,8 +8,8 @@
 class CTestObject : public CGameObject
 {
 public:
-	CTestObject(shared_ptr<DxDevice> _device);
-	~CTestObject();
+	explicit CTestObject(shared_ptr<DxDevice> _device);
+	virtual ~CTestObject();
 public:
 	virtual HRESULT Init_GameObject(void)override;
 	virtual int Update_GameObject(const std::shared_ptr<CTimer> t)override;

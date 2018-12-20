@@ -260,5 +260,11 @@
     <ClInclude Include="..\Code_Engine\Controller.h">
       <Filter>01.ToEngine\01.Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code_Engine\UploadBuffer.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\UploadBuffer.hpp">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

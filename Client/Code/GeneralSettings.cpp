@@ -15,7 +15,7 @@
 #include "BasicMesh_Crate.h"
 #include "Material.h"
 #include "Controller.h"
-
+#include "UploadBuffer.h"
 
 CGeneralSettings::CGeneralSettings(const std::shared_ptr<DxDevice> Device, const std::shared_ptr<CTimer> Timer1, const std::shared_ptr<CTimer> Timer2)
 	: m_DxDevice(Device), m_Timer1(move(Timer1)), m_Timer2(move(Timer2)),m_fTimeAcc(0.f),m_CallPerSec(0.f)
@@ -69,13 +69,15 @@ HRESULT CGeneralSettings::InitComponents()
 	m_Controller = inst;
 	CComponentHolder::GetInstance()->AddOriginComponent("Controller", inst);
 
-
-
 	inst.reset(new CTransform(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("Transform", inst);
 
 	inst.reset(new CCamera(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("Camera", inst);
+
+	inst.reset(new CUploadBuffer<ObjectConstants>(m_DxDevice));
+
+
 
 	inst.reset(new CBox(m_DxDevice));
 	if (FAILED(inst->Init_Component()))

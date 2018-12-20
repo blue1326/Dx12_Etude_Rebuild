@@ -205,6 +205,8 @@
     <ClInclude Include="..\Code_Engine\ShaderCompiler.h" />
     <ClInclude Include="..\Code_Engine\Timer.h" />
     <ClInclude Include="..\Code_Engine\Transform.h" />
+    <ClInclude Include="..\Code_Engine\UploadBuffer.h" />
+    <ClInclude Include="..\Code_Engine\UploadBuffer.hpp" />
     <ClInclude Include="..\Headers\d3dHeaders.h" />
     <ClInclude Include="..\Headers\Functor.h" />
     <ClInclude Include="..\Headers\GlobalVariables.h" />
