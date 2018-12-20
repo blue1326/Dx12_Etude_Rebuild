@@ -13,7 +13,7 @@
 class CRenderer : public CComponent
 {
 public:
-	enum RENDER { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_ALPHA, RENDER_UI, RENDER_DUAL, RENDER_END };
+	enum RENDER { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_ALPHA, RENDER_UI, RENDER_DEBUG, RENDER_DUAL, RENDER_END };
 public:
 	explicit CRenderer(const shared_ptr<DxDevice> _device);
 	virtual ~CRenderer();
@@ -24,6 +24,7 @@ public:
 	virtual void Render_GameObject(void);
 
 	void RenderNoneAlpha(void);
+	void RenderDebug(void);
 
 	HRESULT Add_RenderList(RENDER eType, shared_ptr<CGameObject> object);
 
@@ -45,12 +46,22 @@ private:
 	void BuildRootSignature();
 	void BuildShadersAndInputLayout();
 	void BuildPSOs();
-private://rootsignature
-	ComPtr<ID3D12RootSignature> m_RootSignature;
+
+	void BuildRootSignature_Debug();
+	void BuildShadersAndInputLayout_Debug();
+	void BuildPSO_Debug();
+private://rootsignatures
+	//ComPtr<ID3D12RootSignature> m_RootSignature;
+
+	typedef unordered_map<string, ComPtr<ID3D12RootSignature>> ROOTSIGNATURE;
+	ROOTSIGNATURE m_RootSignatures;
 private://shader
 	ComPtr<ID3DBlob> m_vsByteCode;
 	ComPtr<ID3DBlob> m_psByteCode;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> m_InputLayout;
+	typedef unordered_map<string, vector<D3D12_INPUT_ELEMENT_DESC>> INPUTLAYOUT;
+	INPUTLAYOUT m_InputLayouts;
+
 private://pso
 	ComPtr<ID3D12PipelineState> m_PSO;
 	typedef unordered_map < string, ComPtr<ID3D12PipelineState>> MAP_PSOS;
@@ -68,9 +79,9 @@ public:
 	{
 		return m_PSOs[_str];
 	}
-	ComPtr<ID3D12RootSignature> GetRootSignature()
+	ComPtr<ID3D12RootSignature> GetRootSignature(string _str)
 	{
-		return m_RootSignature;
+		return m_RootSignatures[_str];
 	}
 };
 #endif // Renderer_h__

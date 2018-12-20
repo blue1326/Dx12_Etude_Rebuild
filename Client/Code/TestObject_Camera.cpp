@@ -67,7 +67,7 @@ void CTestObject_Camera::Check_input_Keyboard(const std::shared_ptr<CTimer> t)
 {
 	//it is testcode
 	XMMATRIX matWorld;
-	matWorld = XMMatrixInverse(nullptr, g_matView);
+	matWorld = XMMatrixInverse(nullptr, m_DxDevice->GetViewMatrix());
 	XMFLOAT4X4 tmpWorld;
 	XMStoreFloat4x4(&tmpWorld, matWorld);
 	float fSpeed = 10.f;
@@ -178,7 +178,7 @@ void CTestObject_Camera::Check_input_Mouse(const std::shared_ptr<CTimer> t)
 	CCamera* pCamInst = dynamic_cast<CCamera*>(pCamera.get());
 	//signed long dwMouseMove = 0;
 	XMMATRIX matWorld;
-	matWorld = XMMatrixInverse(nullptr, g_matView);
+	matWorld = XMMatrixInverse(nullptr, m_DxDevice->GetViewMatrix());
 	XMFLOAT4X4 tmpWorld;
 	XMStoreFloat4x4(&tmpWorld, matWorld);
 	float fSpeed = 100.f;

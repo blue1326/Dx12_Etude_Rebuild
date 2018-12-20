@@ -4,6 +4,8 @@
 DxDevice::DxDevice()
 	:m_4xMsaaState(false)
 	,m_4xMsaaQuality(0)
+	,m_matProj(XMMatrixIdentity())
+	,m_matView(XMMatrixIdentity())
 {
 
 }

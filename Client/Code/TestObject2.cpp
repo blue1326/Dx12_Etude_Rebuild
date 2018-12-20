@@ -48,7 +48,7 @@ int CTestObject2::Update_GameObject(const std::shared_ptr<CTimer> t)
 
 	XMMATRIX world, WVP;
 	world = ((CTransform*)pTransform.get())->GetWorld();
-	WVP = world * g_matView * g_matProj;
+	WVP = world * m_DxDevice->GetViewMatrix() * m_DxDevice->GetProjMatrix();
 
 	ObjectConstants objConstants;
 	XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(WVP));
@@ -82,7 +82,7 @@ void CTestObject2::Render_GameObject()
 	//ID3D12DescriptorHeap* descriptorHeaps[] = { dynamic_cast<CBox*>(pBox.get())->GetCBVHeap().Get() };
 	ID3D12DescriptorHeap* descriptorHeaps[] = {m_CbvHeap.Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-	cmdList->SetGraphicsRootSignature(dynamic_cast<CRenderer*>(pRenderer.get())->GetRootSignature().Get());
+	cmdList->SetGraphicsRootSignature(dynamic_cast<CRenderer*>(pRenderer.get())->GetRootSignature("Debug").Get());
 	cmdList->IASetVertexBuffers(0, 1, &(dynamic_cast<CBasicMesh_Crate*>(pCrate.get())->GetGeometry()->VertexBufferView()));
 	cmdList->IASetIndexBuffer(&(dynamic_cast<CBasicMesh_Crate*>(pCrate.get())->GetGeometry()->IndexBufferView()));
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -3,7 +3,7 @@
 #include "ShaderCompiler.h"
 CRenderer::CRenderer(const std::shared_ptr<DxDevice> _device)
 	:m_DxDevice(_device)
-	,m_RootSignature(nullptr)
+	//,m_RootSignature(nullptr)
 {
 	
 }
@@ -38,19 +38,30 @@ void CRenderer::Update_Component(const std::shared_ptr<CTimer> t)
 
 void CRenderer::Render_GameObject(void)
 {
+	RenderDebug();
 	RenderNoneAlpha();
 	Clear_RenderList();
 }
 
 void CRenderer::RenderNoneAlpha(void)
 {
-	//m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("opaquePSO").Get());
-	m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("opaque_wf").Get());
+	//m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("DebugPSO").Get());
+	m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("Debug").Get());
 	for (const auto &j : m_RenderList[RENDER_NONEALPHA])
 	{
 		j->Render_GameObject();
 	}
 }
+
+void CRenderer::RenderDebug(void)
+{
+	m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("Debug_wf").Get());
+	for (const auto &j : m_RenderList[RENDER_DEBUG])
+	{
+		j->Render_GameObject();
+	}
+}
+
 std::shared_ptr<CComponent> CRenderer::Clone()
 {
 	return this->shared_from_this();
@@ -76,6 +87,23 @@ void CRenderer::Clear_RenderList()
 }
 
 void CRenderer::BuildRootSignature()
+{
+	BuildRootSignature_Debug();
+	
+}
+
+void CRenderer::BuildShadersAndInputLayout()
+{
+	BuildShadersAndInputLayout_Debug();
+}
+
+void CRenderer::BuildPSOs()
+{
+	BuildPSO_Debug();
+}
+
+
+void CRenderer::BuildRootSignature_Debug()
 {
 	// Shader programs typically require resources as input (constant buffers,
 	// textures, samplers).  The root signature defines the resources the shader
@@ -111,17 +139,23 @@ void CRenderer::BuildRootSignature()
 		0,
 		serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(),
-		IID_PPV_ARGS(&m_RootSignature)));
+		IID_PPV_ARGS(&m_RootSignatures["Debug"])));
 }
 
-void CRenderer::BuildShadersAndInputLayout()
+void CRenderer::BuildShadersAndInputLayout_Debug()
 {
-	m_Shaders["stdVS"] = CShaderCompiler::CompileShader(L"../Shaders/Box_color.hlsl", nullptr, "VS", "vs_5_0");
+	m_Shaders["DebugVS"] = CShaderCompiler::CompileShader(L"../Shaders/Debug.hlsl", nullptr, "VS", "vs_5_0");
 	//m_vsByteCode = CShaderCompiler::CompileShader(L"../Shaders/Box_color.hlsl", nullptr, "VS", "vs_5_0");
-	m_Shaders["opaquePS"] = CShaderCompiler::CompileShader(L"../Shaders/Box_color.hlsl", nullptr, "PS", "ps_5_0");
+	m_Shaders["DebugPS"] = CShaderCompiler::CompileShader(L"../Shaders/Debug.hlsl", nullptr, "PS", "ps_5_0");
 	//m_psByteCode = CShaderCompiler::CompileShader(L"../Shaders/Box_color.hlsl", nullptr, "PS", "ps_5_0");
-
+	
 	m_InputLayout =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+	m_InputLayouts["Debug"] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -129,21 +163,21 @@ void CRenderer::BuildShadersAndInputLayout()
 	};
 }
 
-void CRenderer::BuildPSOs()
+void CRenderer::BuildPSO_Debug()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	psoDesc.InputLayout = { m_InputLayout.data(), (UINT)m_InputLayout.size() };
-	psoDesc.pRootSignature = m_RootSignature.Get();
+	psoDesc.InputLayout = { m_InputLayouts["Debug"].data(), (UINT)m_InputLayouts["Debug"].size() };
+	psoDesc.pRootSignature = m_RootSignatures["Debug"].Get();
 	psoDesc.VS =
 	{
-		reinterpret_cast<BYTE*>(m_Shaders["stdVS"]->GetBufferPointer()),
-		m_Shaders["stdVS"]->GetBufferSize()
+		reinterpret_cast<BYTE*>(m_Shaders["DebugVS"]->GetBufferPointer()),
+		m_Shaders["DebugVS"]->GetBufferSize()
 	};
 	psoDesc.PS =
 	{
-		reinterpret_cast<BYTE*>(m_Shaders["opaquePS"]->GetBufferPointer()),
-		m_Shaders["opaquePS"]->GetBufferSize()
+		reinterpret_cast<BYTE*>(m_Shaders["DebugPS"]->GetBufferPointer()),
+		m_Shaders["DebugPS"]->GetBufferSize()
 	};
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -155,9 +189,10 @@ void CRenderer::BuildPSOs()
 	psoDesc.SampleDesc.Count = m_DxDevice->Get4xMsaaState() ? 4 : 1;
 	psoDesc.SampleDesc.Quality = m_DxDevice->Get4xMsaaState() ? (m_DxDevice->Get4xMsaaQuality() - 1) : 0;
 	psoDesc.DSVFormat = m_DxDevice->GetDepthStencilBufferFormat();
-	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["opaque"])));
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["Debug"])));
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaqueWireframePsoDesc = psoDesc;
 	opaqueWireframePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&m_PSOs["opaque_wf"])));
+	opaqueWireframePsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&m_PSOs["Debug_wf"])));
 }

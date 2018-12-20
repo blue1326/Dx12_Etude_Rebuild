@@ -148,7 +148,26 @@ public:
 	{
 		return m_DepthStencilFormat;
 	}
-
+private://view proj matrix
+	XMMATRIX m_matView;
+	XMMATRIX m_matProj;
+public://view proj Matrix getter setter
+	const XMMATRIX GetViewMatrix()
+	{
+		return m_matView;
+	}
+	const XMMATRIX GetProjMatrix()
+	{
+		return m_matProj;
+	}
+	void SetViewMatrix(const XMMATRIX _matView)
+	{
+		m_matView = _matView;
+	}
+	void SetProjMatrix(const XMMATRIX _matProj)
+	{
+		m_matProj = _matProj;
+	}
 public:
 	bool Get4xMsaaState()const;//to renderer?
 	UINT Get4xMsaaQuality()const;

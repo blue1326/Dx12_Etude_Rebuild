@@ -53,8 +53,9 @@ void CCamera::Update_Component(const std::shared_ptr<CTimer> t)
 {
 	                                   //pos   target  up
 	XMMATRIX m_View = XMMatrixLookAtLH(m_vEye, m_vAt, m_vUp);
-	g_matView = m_View;
+	//g_matView = m_View;
 	
+	m_DxDevice->SetViewMatrix(m_View);
 }
 
 std::shared_ptr<CComponent> CCamera::Clone()
@@ -69,7 +70,8 @@ void CCamera::OnResize()
 {
 	m_Proj =  XMMatrixPerspectiveFovLH(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 
-	g_matProj = m_Proj;
+	//g_matProj = m_Proj;
+	m_DxDevice->SetProjMatrix(m_Proj);
 	/*XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&m_Proj, P);*/
 }

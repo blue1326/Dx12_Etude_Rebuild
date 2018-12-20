@@ -7,8 +7,8 @@ HINSTANCE g_hInst;
 int g_ClientWidth = 800;
 int g_ClientHeight = 600;
 bool g_DeviceInitState = false;
-XMMATRIX g_matView = XMMatrixIdentity();
-XMMATRIX g_matProj = XMMatrixIdentity();
+//XMMATRIX g_matView = XMMatrixIdentity();
+//XMMATRIX g_matProj = XMMatrixIdentity();
 
 //CApiSetUP* CApiSetUP_Derived::m_App = nullptr; //static initalize
 
