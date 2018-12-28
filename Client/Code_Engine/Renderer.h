@@ -13,7 +13,7 @@
 class CRenderer : public CComponent
 {
 public:
-	enum RENDER { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_ALPHA, RENDER_UI, RENDER_DEBUG, RENDER_DUAL, RENDER_END };
+	enum RENDER { RENDER_PRIORITY, RENDER_NONEALPHA, RENDER_ALPHA, RENDER_UI, RENDER_DEBUG,RENDER_DEBUG_TEST, RENDER_DUAL, RENDER_END };
 public:
 	explicit CRenderer(const shared_ptr<DxDevice> _device);
 	virtual ~CRenderer();
@@ -25,6 +25,7 @@ public:
 
 	void RenderNoneAlpha(void);
 	void RenderDebug(void);
+	void RenderDebug_test(void);
 
 	HRESULT Add_RenderList(RENDER eType, shared_ptr<CGameObject> object);
 
@@ -49,9 +50,14 @@ private:
 
 	void BuildRootSignature_Debug();
 	void BuildShadersAndInputLayout_Debug();
+	void BuildPSO_Debug();
+
+	void BuildRootSignature_Debug_test();
+	void BuildShadersAndInputLayout_Debug_test();
+	void BuildPSO_Debug_test();
+
 	void BuildRootSignature_Default();
 	void BuildShadersAndInputLayout_Default();
-	void BuildPSO_Debug();
 	void BuildPSO_Default();
 
 	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();

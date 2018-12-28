@@ -152,6 +152,7 @@
     <ClCompile Include="..\Code\GeneralSettings.cpp" />
     <ClCompile Include="..\Code\TestObject.cpp" />
     <ClCompile Include="..\Code\TestObject2.cpp" />
+    <ClCompile Include="..\Code\TestObject3.cpp" />
     <ClCompile Include="..\Code\TestObject_Camera.cpp" />
     <ClCompile Include="..\Code\testScene.cpp" />
     <ClCompile Include="..\Code_Engine\BasicMesh.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="..\Code_Engine\Component.cpp" />
     <ClCompile Include="..\Code_Engine\ComponentHolder.cpp" />
     <ClCompile Include="..\Code_Engine\Controller.cpp" />
+    <ClCompile Include="..\Code_Engine\DescriptorHeap.cpp" />
     <ClCompile Include="..\Code_Engine\DxDevice.cpp" />
     <ClCompile Include="..\Code_Engine\dxException.cpp" />
     <ClCompile Include="..\Code_Engine\GameObject.cpp" />
@@ -183,6 +185,7 @@
     <ClInclude Include="..\Code\GeneralSettings.h" />
     <ClInclude Include="..\Code\TestObject.h" />
     <ClInclude Include="..\Code\TestObject2.h" />
+    <ClInclude Include="..\Code\TestObject3.h" />
     <ClInclude Include="..\Code\TestObject_Camera.h" />
     <ClInclude Include="..\Code\testScene.h" />
     <ClInclude Include="..\Code_Engine\BasicMesh.h" />
@@ -193,6 +196,7 @@
     <ClInclude Include="..\Code_Engine\Component.h" />
     <ClInclude Include="..\Code_Engine\ComponentHolder.h" />
     <ClInclude Include="..\Code_Engine\Controller.h" />
+    <ClInclude Include="..\Code_Engine\DescriptorHeap.h" />
     <ClInclude Include="..\Code_Engine\DxDevice.h" />
     <ClInclude Include="..\Code_Engine\dxException.h" />
     <ClInclude Include="..\Code_Engine\GameObject.h" />
@@ -206,7 +210,6 @@
     <ClInclude Include="..\Code_Engine\Timer.h" />
     <ClInclude Include="..\Code_Engine\Transform.h" />
     <ClInclude Include="..\Code_Engine\UploadBuffer.h" />
-    <ClInclude Include="..\Code_Engine\UploadBuffer.hpp" />
     <ClInclude Include="..\Headers\d3dHeaders.h" />
     <ClInclude Include="..\Headers\Functor.h" />
     <ClInclude Include="..\Headers\GlobalVariables.h" />

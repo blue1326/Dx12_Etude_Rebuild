@@ -40,7 +40,7 @@ void CRenderer::Render_GameObject(void)
 {
 	RenderNoneAlpha();
 	RenderDebug();
-	
+	RenderDebug_test();
 	Clear_RenderList();
 }
 
@@ -58,6 +58,16 @@ void CRenderer::RenderDebug(void)
 {
 	m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("Debug_wf").Get());
 	for (const auto &j : m_RenderList[RENDER_DEBUG])
+	{
+		j->Render_GameObject();
+	}
+}
+
+
+void CRenderer::RenderDebug_test(void)
+{
+	m_DxDevice->GetCommandList().Get()->SetPipelineState(GetPSO("Debug_test").Get());
+	for (const auto &j : m_RenderList[RENDER_DEBUG_TEST])
 	{
 		j->Render_GameObject();
 	}
@@ -90,18 +100,21 @@ void CRenderer::Clear_RenderList()
 void CRenderer::BuildRootSignature()
 {
 	BuildRootSignature_Debug();
+	BuildRootSignature_Debug_test();
 	BuildRootSignature_Default();
 }
 
 void CRenderer::BuildShadersAndInputLayout()
 {
 	BuildShadersAndInputLayout_Debug();
+	BuildShadersAndInputLayout_Debug_test();
 	BuildShadersAndInputLayout_Default();
 }
 
 void CRenderer::BuildPSOs()
 {
 	BuildPSO_Debug();
+	BuildPSO_Debug_test();
 	BuildPSO_Default();
 }
 
@@ -158,12 +171,46 @@ void CRenderer::BuildShadersAndInputLayout_Debug()
 	};
 }
 
+void CRenderer::BuildPSO_Debug()
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
+	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	psoDesc.InputLayout = { m_InputLayouts["Debug"].data(), (UINT)m_InputLayouts["Debug"].size() };
+	psoDesc.pRootSignature = m_RootSignatures["Debug"].Get();
+	psoDesc.VS =
+	{
+		reinterpret_cast<BYTE*>(m_Shaders["DebugVS"]->GetBufferPointer()),
+		m_Shaders["DebugVS"]->GetBufferSize()
+	};
+	psoDesc.PS =
+	{
+		reinterpret_cast<BYTE*>(m_Shaders["DebugPS"]->GetBufferPointer()),
+		m_Shaders["DebugPS"]->GetBufferSize()
+	};
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	psoDesc.SampleMask = UINT_MAX;
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	psoDesc.NumRenderTargets = 1;
+	psoDesc.RTVFormats[0] = m_DxDevice->GetBackBufferFormat();
+	psoDesc.SampleDesc.Count = m_DxDevice->Get4xMsaaState() ? 4 : 1;
+	psoDesc.SampleDesc.Quality = m_DxDevice->Get4xMsaaState() ? (m_DxDevice->Get4xMsaaQuality() - 1) : 0;
+	psoDesc.DSVFormat = m_DxDevice->GetDepthStencilBufferFormat();
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["Debug"])));
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaqueWireframePsoDesc = psoDesc;
+	opaqueWireframePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	opaqueWireframePsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&m_PSOs["Debug_wf"])));
+}
 
 void CRenderer::BuildRootSignature_Default()
 {
 	CD3DX12_DESCRIPTOR_RANGE texTable;
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-
+	/*CD3DX12_DESCRIPTOR_RANGE cbvTable;
+	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);*/
 	// Root parameter can be a table, root descriptor or root constants.
 	CD3DX12_ROOT_PARAMETER slotRootParameter[4];
 
@@ -172,7 +219,8 @@ void CRenderer::BuildRootSignature_Default()
 	slotRootParameter[1].InitAsConstantBufferView(0);
 	slotRootParameter[2].InitAsConstantBufferView(1);
 	slotRootParameter[3].InitAsConstantBufferView(2);
-
+	//slotRootParameter[1].InitAsConstantBufferView()
+	///slotRootParameter[1].InitAsDescriptorTable()
 	auto staticSamplers = GetStaticSamplers();
 
 	// A root signature is an array of root parameters.
@@ -213,21 +261,79 @@ void CRenderer::BuildShadersAndInputLayout_Default()
 	};
 }
 
-void CRenderer::BuildPSO_Debug()
+
+
+void CRenderer::BuildRootSignature_Debug_test()
+{
+	// Shader programs typically require resources as input (constant buffers,
+	// textures, samplers).  The root signature defines the resources the shader
+	// programs expect.  If we think of the shader programs as a function, and
+	// the input resources as function parameters, then the root signature can be
+	// thought of as defining the function signature.  
+
+	// Root parameter can be a table, root descriptor or root constants.
+	CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+
+	// Create a single descriptor table of CBVs.
+	/*CD3DX12_DESCRIPTOR_RANGE cbvTable;
+	cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+*/
+	slotRootParameter[0].InitAsConstantBufferView(0);
+
+	// A root signature is an array of root parameters.
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr,
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+	// create a root signature with a single slot which points to a descriptor range consisting of a single constant buffer
+	ComPtr<ID3DBlob> serializedRootSig = nullptr;
+	ComPtr<ID3DBlob> errorBlob = nullptr;
+	HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1,
+		serializedRootSig.GetAddressOf(), errorBlob.GetAddressOf());
+
+	if (errorBlob != nullptr)
+	{
+		::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+	}
+	ThrowIfFailed(hr);
+
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateRootSignature(
+		0,
+		serializedRootSig->GetBufferPointer(),
+		serializedRootSig->GetBufferSize(),
+		IID_PPV_ARGS(&m_RootSignatures["Debug_test"])));
+}
+
+
+void CRenderer::BuildShadersAndInputLayout_Debug_test()
+{
+	m_Shaders["DebugVS_test"] = CShaderCompiler::CompileShader(L"../Shaders/Debug.hlsl", nullptr, "VS", "vs_5_0");
+	m_Shaders["DebugPS_test"] = CShaderCompiler::CompileShader(L"../Shaders/Debug.hlsl", nullptr, "PS", "ps_5_0");
+
+	m_InputLayouts["Debug_test"] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+}
+
+
+void CRenderer::BuildPSO_Debug_test()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc;
 	ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	psoDesc.InputLayout = { m_InputLayouts["Debug"].data(), (UINT)m_InputLayouts["Debug"].size() };
-	psoDesc.pRootSignature = m_RootSignatures["Debug"].Get();
+	psoDesc.InputLayout = { m_InputLayouts["Debug_test"].data(), (UINT)m_InputLayouts["Debug_test"].size() };
+	psoDesc.pRootSignature = m_RootSignatures["Debug_test"].Get();
 	psoDesc.VS =
 	{
-		reinterpret_cast<BYTE*>(m_Shaders["DebugVS"]->GetBufferPointer()),
-		m_Shaders["DebugVS"]->GetBufferSize()
+		reinterpret_cast<BYTE*>(m_Shaders["DebugVS_test"]->GetBufferPointer()),
+		m_Shaders["DebugVS_test"]->GetBufferSize()
 	};
 	psoDesc.PS =
 	{
-		reinterpret_cast<BYTE*>(m_Shaders["DebugPS"]->GetBufferPointer()),
-		m_Shaders["DebugPS"]->GetBufferSize()
+		reinterpret_cast<BYTE*>(m_Shaders["DebugPS_test"]->GetBufferPointer()),
+		m_Shaders["DebugPS_test"]->GetBufferSize()
 	};
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -239,14 +345,13 @@ void CRenderer::BuildPSO_Debug()
 	psoDesc.SampleDesc.Count = m_DxDevice->Get4xMsaaState() ? 4 : 1;
 	psoDesc.SampleDesc.Quality = m_DxDevice->Get4xMsaaState() ? (m_DxDevice->Get4xMsaaQuality() - 1) : 0;
 	psoDesc.DSVFormat = m_DxDevice->GetDepthStencilBufferFormat();
-	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["Debug"])));
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["Debug_test"])));
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaqueWireframePsoDesc = psoDesc;
 	opaqueWireframePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
 	opaqueWireframePsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&m_PSOs["Debug_wf"])));
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&m_PSOs["Debug_wf_test"])));
 }
-
 
 void CRenderer::BuildPSO_Default()
 {

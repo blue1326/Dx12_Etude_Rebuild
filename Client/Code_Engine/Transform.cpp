@@ -67,7 +67,7 @@ std::shared_ptr<CComponent> CTransform::Clone()
 
 DirectX::XMMATRIX CTransform::GetWorld()
 {
-	return m_MatWorld;// make_shared(m_matWorld);
+	return m_MatWorld;
 }
 
 float CTransform::GetAngle(ANGLE eType)

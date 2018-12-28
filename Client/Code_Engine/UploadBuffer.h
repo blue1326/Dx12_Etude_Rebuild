@@ -5,20 +5,26 @@
 #include "BufferUtility.h"
 #include "dxException.h"
 template<typename T>
-class CDiscriptor :public CComponent
+class UploadBuffer :public CComponent
 {
 public:
-	explicit CDiscriptor(const shared_ptr<DxDevice> _device)
+	explicit UploadBuffer(const shared_ptr<DxDevice> _device)
 		:m_DxDevice(_device)
 		,m_Heap(nullptr)
 		,m_UploadBuffer(nullptr)
-		,m_MappedData(NULL)
+		,m_MappedData(nullptr)
 		,m_ElementByteSize(0)
 		, m_DescriptorSize(0)
 	{}
-	/*CDiscriptor(const CDiscriptor& rhs) = delete;
-	CDiscriptor& operator=(const CDiscriptor&rhs) = delete;*/
-	virtual ~CDiscriptor() {}
+	UploadBuffer(const UploadBuffer& rhs) = delete;
+	UploadBuffer& operator=(const UploadBuffer&rhs) = delete;
+	virtual ~UploadBuffer() 
+	{
+		if (m_UploadBuffer != nullptr)
+			m_UploadBuffer->Unmap(0, nullptr);
+
+		m_UploadBuffer = nullptr;
+	}
 
 private:
 	ComPtr<ID3D12DescriptorHeap> m_Heap;
@@ -31,19 +37,29 @@ private:
 	UINT m_DescriptorSize;
 
 public:
+
+	const D3D12_GPU_VIRTUAL_ADDRESS Address()
+	{
+		return m_UploadBuffer->GetGPUVirtualAddress();
+	}
+
+	const UINT Size()
+	{
+		return m_ElementByteSize;
+	}
 	void SetData(const T& _data)
 	{
 		data = _data;
-		memcpy(&m_MappedData[m_ElementByteSize], &data, sizeof(data));
+		memcpy(&m_MappedData[0], &_data, sizeof(T));
 	}
 	ComPtr<ID3D12DescriptorHeap> GetHeap()
 	{
 		return m_Heap;
 	}
 
-	ComPtr<ID3D12Resource> GetConstantBuffer()
+	ID3D12Resource* Resource()
 	{
-		return m_UploadBuffer;
+		return m_UploadBuffer.Get();
 	}
 	const UINT& GetDesciptorSize()
 	{
@@ -53,12 +69,6 @@ public:
 public:
 	virtual HRESULT Init_Component() 
 	{ 
-		ComPtr<ID3D12GraphicsCommandList> cmdlist = m_DxDevice->GetCommandList();
-		ComPtr<ID3D12CommandAllocator> cmdalloc = m_DxDevice->GetCommandAllocator();
-		ComPtr<ID3D12CommandQueue> cmdqueue = m_DxDevice->GetCommandQueue();
-		// Reset the command list to prep for initialization commands.
-		ThrowIfFailed(cmdlist->Reset(cmdalloc.Get(), nullptr));
-
 		// Get the increment size of a descriptor in this heap type.  This is hardware specific, 
 		// so we have to query this information.
 		m_DescriptorSize = m_DxDevice->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -67,17 +77,11 @@ public:
 		BuildDescriptorHeap();
 		CreateUploadBuffer();
 
-		// Execute the initialization commands.
-		ThrowIfFailed(cmdlist->Close());
-		ID3D12CommandList* cmdsLists[] = { cmdlist.Get() };
-		cmdqueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
-
-		// Wait until initialization is complete.
-		m_DxDevice->FlushCommandQueue();
+	
 		return S_OK; 
 	}
 	virtual void Update_Component(const std::shared_ptr<CTimer> t){}
-	virtual std::shared_ptr<CComponent> Clone() { return shared_ptr<CComponent>(new CDiscriptor<T>(m_DxDevice)); }
+	virtual std::shared_ptr<CComponent> Clone() { return shared_ptr<CComponent>(new UploadBuffer<T>(m_DxDevice)); }
 	virtual void OnResize() {}
 private:
 	void BuildDescriptorHeap();
@@ -86,11 +90,11 @@ private:
 };
 
 template<typename T>
-void CDiscriptor<T>::CreateUploadBuffer()
+void UploadBuffer<T>::CreateUploadBuffer()
 {
 	m_ElementByteSize = BufferUtility::CalcConstantBufferByteSize(sizeof(T));
 
-	ThrowIfFailed(m_DxDevice->GetDevice().Get()->CreateCommittedResource(
+	ThrowIfFailed(m_DxDevice->GetDevice()->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(m_ElementByteSize),
@@ -102,13 +106,13 @@ void CDiscriptor<T>::CreateUploadBuffer()
 }
 
 template<typename T>
-void CDiscriptor<T>::BuildConstantBuffer()
+void UploadBuffer<T>::BuildConstantBuffer()
 {
 
 }
 
 template<typename T>
-void CDiscriptor<T>::BuildDescriptorHeap()
+void UploadBuffer<T>::BuildDescriptorHeap()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC HeapDesc = {};
 	HeapDesc.NumDescriptors = 1;
