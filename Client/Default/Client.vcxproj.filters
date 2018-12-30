@@ -236,9 +236,6 @@
     <ClInclude Include="..\Code_Engine\Renderer.h">
       <Filter>01.ToEngine\01.Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code_Engine\Transform.h">
-      <Filter>01.ToEngine\01.Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Structs.h">
       <Filter>99.Headers\00.separated_header</Filter>
     </ClInclude>
@@ -266,13 +263,16 @@
     <ClInclude Include="..\Code_Engine\Controller.h">
       <Filter>01.ToEngine\01.Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code_Engine\UploadBuffer.h">
-      <Filter>01.ToEngine\01.Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\Code\TestObject3.h">
       <Filter>02.toClient</Filter>
     </ClInclude>
     <ClInclude Include="..\Code_Engine\DescriptorHeap.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\ConstantBuffer.h">
+      <Filter>01.ToEngine\01.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code_Engine\Transform.h">
       <Filter>01.ToEngine\01.Components</Filter>
     </ClInclude>
   </ItemGroup>

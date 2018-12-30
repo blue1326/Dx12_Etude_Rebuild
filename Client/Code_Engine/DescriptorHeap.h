@@ -27,6 +27,10 @@ private:
 	D3D12_DESCRIPTOR_HEAP_DESC m_HeapDesc;
 	bool isDescSetup;
 public:
+	const UINT GetDescriptorSize()
+	{
+		return m_DescriptorSize;
+	}
 	void SetUpHeapDesc(D3D12_DESCRIPTOR_HEAP_DESC& _desc);
 	ComPtr<ID3D12DescriptorHeap> GetHeap()
 	{

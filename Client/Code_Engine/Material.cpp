@@ -48,7 +48,7 @@ void CMaterial::Update_Component(const std::shared_ptr<CTimer> t)
 
 std::shared_ptr<CComponent> CMaterial::Clone()
 {
-	return shared_ptr<CComponent>(new CMaterial(*this));
+	return this->shared_from_this();//shared_ptr<CComponent>(new CMaterial(*this));
 }
 
 void CMaterial::SetUpMaterialState(const shared_ptr<Material> _Material)

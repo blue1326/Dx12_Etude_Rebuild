@@ -15,7 +15,8 @@
 #include "BasicMesh_Crate.h"
 #include "Material.h"
 #include "Controller.h"
-#include "UploadBuffer.h"
+#include "ConstantBuffer.h"
+
 #include "DescriptorHeap.h"
 
 CGeneralSettings::CGeneralSettings(const std::shared_ptr<DxDevice> Device, const std::shared_ptr<CTimer> Timer1, const std::shared_ptr<CTimer> Timer2)
@@ -76,16 +77,16 @@ HRESULT CGeneralSettings::InitComponents()
 	inst.reset(new CCamera(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("Camera", inst);
 
-	inst.reset(new UploadBuffer<ObjectConstants>(m_DxDevice));
+	inst.reset(new CConstantBuffer<ObjectConstants>(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("ObjConstant", inst);
 
-	inst.reset(new UploadBuffer<MaterialConstants>(m_DxDevice));
+	inst.reset(new CConstantBuffer<MaterialConstants>(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("MatConstant", inst);
 
-	inst.reset(new UploadBuffer<PassConstants>(m_DxDevice));
+	inst.reset(new CConstantBuffer<PassConstants>(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("PassConstant", inst);
 	
-	inst.reset(new UploadBuffer<ObjectConstant>(m_DxDevice));
+	inst.reset(new CConstantBuffer<ObjectConstant>(m_DxDevice));
 	CComponentHolder::GetInstance()->AddOriginComponent("testConstant", inst);
 
 	inst.reset(new CDescriptorHeap(m_DxDevice));
@@ -110,7 +111,7 @@ HRESULT CGeneralSettings::InitComponents()
 	woodCrate->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	woodCrate->Roughness = 0.2f;
 	dynamic_cast<CMaterial*>(inst.get())->SetUpMaterialState(woodCrate);
-	dynamic_cast<CMaterial*>(inst.get())->SetUpTextureLocation(L"../../Textures/WoodCrate02.dds");
+	dynamic_cast<CMaterial*>(inst.get())->SetUpTextureLocation(L"../../Textures/bricks.dds");
 	if (FAILED(inst->Init_Component()))
 		return E_FAIL;
 	CComponentHolder::GetInstance()->AddOriginComponent("Tex_Crate", inst);

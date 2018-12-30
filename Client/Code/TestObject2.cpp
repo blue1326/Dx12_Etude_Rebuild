@@ -4,7 +4,8 @@
 #include "Transform.h"
 #include "Renderer.h"
 #include "BasicMesh_Crate.h"
-#include "UploadBuffer.h"
+#include "DescriptorHeap.h"
+#include "ConstantBuffer.h"
 #include "Material.h"
 //test
 //#include "dxException.h"
@@ -27,7 +28,7 @@ HRESULT CTestObject2::Init_GameObject(void)
 {
 	pTransform = CComponentHolder::GetInstance()->Clone_Component("Transform");
 	((CTransform*)pTransform.get())->Init_Component();
-	((CTransform*)pTransform.get())->SetPosition(1, 0, 0);
+	((CTransform*)pTransform.get())->SetPosition(0, 0, 0);
 	//((CTransform*)pTransform.get())->SetScale(1);
 	pBox = CComponentHolder::GetInstance()->Clone_Component("Box");
 	((CBox*)pBox.get())->Init_Component();
@@ -35,19 +36,25 @@ HRESULT CTestObject2::Init_GameObject(void)
 	
 	pCrate = CComponentHolder::GetInstance()->Clone_Component("Basic_Crate");
 
-	pDiscriptor_OC = CComponentHolder::GetInstance()->Clone_Component("ObjConstant");
-	pDiscriptor_OC->Init_Component();
-	pDiscriptor_PASS = CComponentHolder::GetInstance()->Clone_Component("PassConstant");
-	pDiscriptor_PASS->Init_Component();
-	pDiscriptor_MAT = CComponentHolder::GetInstance()->Clone_Component("MatConstant");
-	pDiscriptor_MAT->Init_Component();
+	pDescriptorHeap = CComponentHolder::GetInstance()->Clone_Component("DescriptorHeap");
+	pDescriptorHeap->Init_Component();
 
 	pMaterial = CComponentHolder::GetInstance()->Clone_Component("Tex_Crate");
 	pMaterial->Init_Component();
 
-	dynamic_cast<CMaterial*>(pMaterial.get())->SetUpDescripterHeap(dynamic_cast<UploadBuffer<MaterialConstants>*>(pDiscriptor_MAT.get())->GetHeap());
-	BuildDescriptorHeaps();
-	BuildConstantBuffers();
+	dynamic_cast<CMaterial*>(pMaterial.get())->SetUpDescripterHeap(dynamic_cast<CDescriptorHeap*>(pDescriptorHeap.get())->GetHeap());
+
+	//CBs
+	pObjConstant = CComponentHolder::GetInstance()->Clone_Component("ObjConstant");
+	pObjConstant->Init_Component();
+	pPassConstant = CComponentHolder::GetInstance()->Clone_Component("PassConstant");
+	pPassConstant->Init_Component();
+	pMatConstant = CComponentHolder::GetInstance()->Clone_Component("MatConstant");
+	pMatConstant->Init_Component();
+
+	
+	/*BuildDescriptorHeaps();
+	BuildConstantBuffers();*/
 
 
 	return S_OK;
@@ -58,31 +65,24 @@ int CTestObject2::Update_GameObject(const std::shared_ptr<CTimer> t)
 	pTransform->Update_Component(t);
 
 
-	//XMMATRIX world, WVP;
-	//world = ((CTransform*)pTransform.get())->GetWorld();
-	//WVP = world * m_DxDevice->GetViewMatrix() * m_DxDevice->GetProjMatrix();
 
-	//ObjectConstant objConstants;
-	//XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(WVP));
-
-
-	//int emementidx = 0; //it is samplecode
-	////copydata
-	//memcpy(&m_MappedData[emementidx * m_ElementByteSize], &objConstants, sizeof(objConstants));
 	XMMATRIX world = dynamic_cast<CTransform*>(pTransform.get())->GetWorld();
 	//passconst
 	PassConstants tmp = m_DxDevice->GetPassConstant();
-	dynamic_cast<UploadBuffer<PassConstants>*>(pDiscriptor_PASS.get())->SetData(m_DxDevice->GetPassConstant());
+	dynamic_cast<CConstantBuffer<PassConstants>*>(pPassConstant.get())->SetData(tmp);
+
 	//objconst
 	ObjectConstants _OC;
-	XMFLOAT4X4 tmp1,tmp2;
-
-	XMStoreFloat4x4(&tmp1, XMMatrixTranspose(world));
-	XMStoreFloat4x4(&tmp2, world);
 
 	XMStoreFloat4x4(&_OC.World, XMMatrixTranspose(world));
 	XMStoreFloat4x4(&_OC.TexTransform,XMMatrixTranspose(XMMatrixIdentity()));
-	dynamic_cast<UploadBuffer<ObjectConstants>*>(pDiscriptor_OC.get())->SetData(_OC);
+	dynamic_cast<CConstantBuffer<ObjectConstants>*>(pObjConstant.get())->SetData(_OC);
+
+
+	ObjectConstants _OCtmp =dynamic_cast<CConstantBuffer<ObjectConstants>*>(pObjConstant.get())->GetData();
+	
+
+
 
 	//matconst
 	Material tmpmaterial = *dynamic_cast<CMaterial*>(pMaterial.get())->GetMaterial().get();
@@ -93,9 +93,9 @@ int CTestObject2::Update_GameObject(const std::shared_ptr<CTimer> t)
 	_MC.Roughness = tmpmaterial.Roughness;
 	XMStoreFloat4x4(&_MC.MatTransform, XMMatrixTranspose(matTransform));
 
-	dynamic_cast<UploadBuffer<MaterialConstants>*>(pDiscriptor_MAT.get())->SetData(_MC);
-	//pDiscriptor_OC->Update_Component(t);
-	//pDiscriptor_MAT->Update_Component(t);
+	dynamic_cast<CConstantBuffer<MaterialConstants>*>(pMatConstant.get())->SetData(_MC);
+
+	MaterialConstants _MCtmp = dynamic_cast<CConstantBuffer<MaterialConstants>*>(pMatConstant.get())->GetData();
 
 
 
@@ -117,14 +117,7 @@ void CTestObject2::Render_GameObject()
 	ComPtr<ID3D12GraphicsCommandList> cmdList = m_DxDevice->GetCommandList();
 
 	
-	//cmdList->SetPipelineState(dynamic_cast<CRenderer*>(pRenderer.get())->GetPSO("opaquePSO").Get());
-
-	//ID3D12DescriptorHeap* descriptorHeaps[] = { m_CbvHeap.Get() };
-	//ID3D12DescriptorHeap* descriptorHeaps[] = { dynamic_cast<CBox*>(pBox.get())->GetCBVHeap().Get() };
-
-	/*ID3D12DescriptorHeap* descriptorHeaps[] = {m_CbvHeap.Get() };
-	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);*/
-	ID3D12DescriptorHeap* descriptorHeaps[] = { dynamic_cast<UploadBuffer<MaterialConstants>*>(pDiscriptor_MAT.get())->GetHeap().Get() };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { dynamic_cast<CDescriptorHeap*>(pDescriptorHeap.get())->GetHeap().Get() };
 	cmdList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	cmdList->SetGraphicsRootSignature(dynamic_cast<CRenderer*>(pRenderer.get())->GetRootSignature("Default").Get());
@@ -133,18 +126,19 @@ void CTestObject2::Render_GameObject()
 	cmdList->IASetIndexBuffer(&(dynamic_cast<CBasicMesh_Crate*>(pCrate.get())->GetGeometry()->IndexBufferView()));
 	cmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(dynamic_cast<UploadBuffer<MaterialConstants>*>(pDiscriptor_MAT.get())->GetHeap()->GetGPUDescriptorHandleForHeapStart());
-	//tex.Offset(0, dynamic_cast<CDiscriptor<MaterialConstants>*>(pDiscriptor_MAT.get())->GetDesciptorSize());
-	D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = dynamic_cast<UploadBuffer<ObjectConstants>*>(pDiscriptor_OC.get())->Resource()->GetGPUVirtualAddress();
-	D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = dynamic_cast<UploadBuffer<MaterialConstants>*>(pDiscriptor_MAT.get())->Resource()->GetGPUVirtualAddress();
-	D3D12_GPU_VIRTUAL_ADDRESS passCBAddress = dynamic_cast<UploadBuffer<PassConstants>*>(pDiscriptor_PASS.get())->Resource()->GetGPUVirtualAddress();
+	CD3DX12_GPU_DESCRIPTOR_HANDLE tex(dynamic_cast<CDescriptorHeap*>(pDescriptorHeap.get())->GetHeap()->GetGPUDescriptorHandleForHeapStart());
+	tex.Offset(0, dynamic_cast<CDescriptorHeap*>(pDescriptorHeap.get())->GetDescriptorSize());
+
+	D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = dynamic_cast<CConstantBuffer<ObjectConstants>*>(pObjConstant.get())->Address();
+	D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = dynamic_cast<CConstantBuffer<MaterialConstants>*>(pMatConstant.get())->Address();
+	D3D12_GPU_VIRTUAL_ADDRESS passCBAddress = dynamic_cast<CConstantBuffer<PassConstants>*>(pPassConstant.get())->Address();
 
 	cmdList->SetGraphicsRootDescriptorTable(0, tex);
 	cmdList->SetGraphicsRootConstantBufferView(1, objCBAddress);
 	cmdList->SetGraphicsRootConstantBufferView(2, passCBAddress);
 	cmdList->SetGraphicsRootConstantBufferView(3, matCBAddress);
 	
-	cmdList->DrawIndexedInstanced(dynamic_cast<CBasicMesh_Crate*>(pCrate.get())->GetGeometry()->DrawArgs["box"].IndexCount,
+	cmdList->DrawIndexedInstanced(dynamic_cast<CBasicMesh_Crate*>(pCrate.get())->GetGeometry()->DrawArg.IndexCount,
 		1, 0, 0, 0);
 
 }

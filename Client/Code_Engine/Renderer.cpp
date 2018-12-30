@@ -219,8 +219,7 @@ void CRenderer::BuildRootSignature_Default()
 	slotRootParameter[1].InitAsConstantBufferView(0);
 	slotRootParameter[2].InitAsConstantBufferView(1);
 	slotRootParameter[3].InitAsConstantBufferView(2);
-	//slotRootParameter[1].InitAsConstantBufferView()
-	///slotRootParameter[1].InitAsDescriptorTable()
+
 	auto staticSamplers = GetStaticSamplers();
 
 	// A root signature is an array of root parameters.
@@ -383,6 +382,8 @@ void CRenderer::BuildPSO_Default()
 	opaquePsoDesc.SampleDesc.Count = m_DxDevice->Get4xMsaaState() ? 4 : 1;
 	opaquePsoDesc.SampleDesc.Quality = m_DxDevice->Get4xMsaaState() ? (m_DxDevice->Get4xMsaaQuality() - 1) : 0;
 	opaquePsoDesc.DSVFormat = m_DxDevice->GetDepthStencilBufferFormat();
+	/*opaquePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	opaquePsoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;*/
 	ThrowIfFailed(m_DxDevice->GetDevice()->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(&m_PSOs["Default"])));
 }
 

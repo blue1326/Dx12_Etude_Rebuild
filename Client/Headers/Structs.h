@@ -3,6 +3,7 @@
 
 #include <DirectXMath.h>
 #include "MathHelper.h"
+
 #define MaxLights 16
 struct Vertex
 {
@@ -33,6 +34,7 @@ struct Light
 	DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };  // point/spot light only
 	float SpotPower = 64.0f;                            // spot light only
 };
+
 struct PassConstants
 {
 	DirectX::XMFLOAT4X4 View = MathHelper::Identity4x4();
